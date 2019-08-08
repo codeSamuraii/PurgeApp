@@ -82,7 +82,7 @@ if __name__ == '__main__':
         print("* Searching for app-related data...")
         matches = scan(argv[1])
 
-    if input("* Delete (along with the app) ? [y/N] ") in {'y', 'Y'}:
+    if input("\n* Delete (along with the app) ? [y/N] ") in {'y', 'Y'}:
         for match in matches:
             if match.is_dir():
                 rmtree(str(match))
@@ -91,6 +91,8 @@ if __name__ == '__main__':
 
         # Removing the app itself
         rmtree(argv[1])
+
+        print("* Done !")
 
     else:
         print("* Aborting.")
