@@ -5,7 +5,21 @@ Cleanly uninstall a macOS application by also removing related files and directo
 
 ### Usage
 ```
-purge_app.py '/Applications/Example.app/'
+./purge_app.py '/Applications/Example.app'
+```
+
+#### Example
+```
+$ ./purge_app.py '/Applications/OneDrive.app'
+
+* Searching for app-related data...
+ - /Library/LaunchDaemons/com.microsoft.OneDriveUpdaterDaemon.plist
+ - /var/db/receipts/com.microsoft.OneDrive.bom
+ - /var/db/receipts/com.microsoft.OneDrive.plist
+ - /Users/codesamuraii/Library/Group Containers/UBF8T346G9.OfficeOneDriveSyncIntegration
+
+* Delete (along with the app) ? [y/N] y
+* Done !
 ```
 
 ### Note
