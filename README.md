@@ -5,8 +5,13 @@ Cleanly uninstall a macOS application by also removing related files and directo
 
 ### Usage
 ```
+python3 purge_app.py '/Applications/Example.app'
+```
+or
+```
 ./purge_app.py '/Applications/Example.app'
 ```
+>You may need to `chmod +x purge_app.py` once before to allow execution.
 
 #### Example
 ```
