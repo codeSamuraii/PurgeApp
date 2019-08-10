@@ -17,6 +17,8 @@ SEARCH_DIRECTORIES = [
     Path("/Library"),
     Path("/System/Library"),
     Path("/var"),
+    # Path("/etc"),
+    # Path("/tmp"),
     Path.home() / "Library",
 ]
 
