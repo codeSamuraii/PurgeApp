@@ -31,10 +31,8 @@ def read_plist(app_path):
         plist_path = Path(app_path, "Contents/Info.plist").resolve(strict=True)
     except FileNotFoundError:
         # The name of the app
-        if input("[!] Couldn't read app information, continue with the name only ? [y/N] ") in {'y', 'Y'}:
-            return {plist_path.parents[1].stem}
-        else:
-            exit()
+        print("! Unable to read app informations. Search will be based on name only.")
+        return {plist_path.parents[1].stem}
 
     plist_content = plistlib.loads(plist_path.read_bytes())
 
@@ -67,31 +65,27 @@ def check_dir(dir_path, hints):
             continue
 
 
-def scan(path_to_app):
-    """Returns a set of paths that may be related the the app."""
-
-    hints = read_plist(path_to_app)
-    print("* Identifiers :")
-    for hint in hints:
-        print(" - {}".format(hint))
-
+def scan(search_directories, hints):
+    """Recursively search in provided directories for hints."""
     results = set()
-
-    for directory in SEARCH_DIRECTORIES:
+    for directory in search_directories:
         for match in check_dir(directory, hints):
             results.add(match)
 
     return results
 
 
-# NOTE: Really bad design, will use argparse afterwards
-if __name__ == '__main__':
-    if len(argv) < 2:
-        print("Usage: purge_app.py PATH_TO_APP.app")
-        exit()
+def run(path_to_app):
+    """Main function."""
 
     print("* Searching for app-related data...")
-    matches = scan(argv[1])
+    hints = read_plist(path_to_app)
+
+    print("* Identifiers :")
+    for hint in hints:
+        print(" - {}".format(hint))
+
+    matches = scan(SEARCH_DIRECTORIES, hints)
     print("* Found {} potential leftovers. Delete :".format(len(matches)))
 
     for match in matches:
@@ -104,8 +98,13 @@ if __name__ == '__main__':
     # Removing the app itself
     if input(" * Delete the app itself ? [y/N] ") in {'y', 'Y'}:
         rmtree(argv[1])
-
         print("* Done !")
 
-    else:
-        print("* Aborting.")
+
+# NOTE: Really bad design, will use argparse afterwards
+if __name__ == '__main__':
+    if len(argv) < 2:
+        print("Usage: purge_app.py PATH_TO_APP.app")
+        exit()
+
+    run(argv[1])
