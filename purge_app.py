@@ -12,16 +12,17 @@ from pathlib import Path
 from shutil import rmtree
 from sys import argv
 
+
 # Common directories where app-related data is
 SEARCH_DIRECTORIES = [
     Path.home() / "Library",
     Path("/Library"),
     Path("/System/Library"),
     Path("/Users/Shared"),
-    Path("/private"),
-    Path('/bin'),
-    Path('/etc'),
-    Path('/var')
+    # TODO: Add these folders only if root
+    # Path('/bin'),
+    # Path('/etc'),
+    # Path('/var')
 ]
 
 
@@ -77,14 +78,14 @@ def scan(search_directories, hints):
 
 def run(path_to_app):
     """Main function."""
-
-    print("* Searching for app-related data...")
+    print("* Reading app informations...")
     hints = read_plist(path_to_app)
 
     print("* Identifiers :")
     for hint in hints:
         print(" - {}".format(hint))
 
+    print("\n* Searching for app-related data (may take a while)...")
     matches = scan(SEARCH_DIRECTORIES, hints)
     print("* Found {} potential leftovers. Delete :".format(len(matches)))
 
@@ -97,7 +98,7 @@ def run(path_to_app):
 
     # Removing the app itself
     if input(" * Delete the app itself ? [y/N] ") in {'y', 'Y'}:
-        rmtree(argv[1])
+        rmtree(path_to_app)
         print("* Done !")
 
 
