@@ -17,8 +17,11 @@ SEARCH_DIRECTORIES = [
     Path.home() / "Library",
     Path("/Library"),
     Path("/System/Library"),
+    Path("/Users/Shared"),
     Path("/private"),
-    Path('/etc')
+    Path('/bin'),
+    Path('/etc'),
+    Path('/var')
 ]
 
 
