@@ -5,7 +5,6 @@ purge_app.py
 © Rémi Héneault (@codesamuraii)
 https://github.com/codesamuraii
 """
-import inspect
 import plistlib
 from os import remove
 from pathlib import Path
@@ -27,7 +26,7 @@ SEARCH_DIRECTORIES = [
 
 
 def read_plist(app_path):
-    """This function returns a set containing the the 'clues' concerning the app."""
+    """Reads the app .plist file and returns a set containing the the 'clues' concerning the app."""
     try:
         plist_path = Path(app_path, "Contents/Info.plist").resolve(strict=True)
     except FileNotFoundError:

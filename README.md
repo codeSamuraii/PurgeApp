@@ -4,17 +4,17 @@ Cleanly uninstall a macOS application by also removing related files and directo
 ###### Inspired by: [hrik2001/macuninstaller](https://github.com/hrik2001/macuninstaller)
 
 ### Usage
-```
+```sh
 python3 purge_app.py '/Applications/Example.app'
 ```
 or
-```
+```sh
 ./purge_app.py '/Applications/Example.app'
 ```
 >You may need to `chmod +x purge_app.py` once before to allow execution.
 
 #### Example
-```
+```sh
 $ ./purge_app.py '/Applications/OneDrive.app'
 
 * Searching for app-related data...
