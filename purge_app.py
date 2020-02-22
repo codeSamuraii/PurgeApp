@@ -31,7 +31,7 @@ def read_plist(app_path):
         plist_path = Path(app_path, "Contents/Info.plist").resolve(strict=True)
     except FileNotFoundError:
         # The name of the app
-        print("! Unable to read app informations. Search will be based on name only.")
+        print("  Unable to read app informations. Search will be based on name only.")
         return {plist_path.parents[1].stem}
 
     plist_content = plistlib.loads(plist_path.read_bytes())
@@ -90,10 +90,14 @@ def run(path_to_app):
 
     for match in matches:
         if input("  — {} [y/N] ".format(str(match))) in {'y', 'Y'}:
-            if match.is_dir():
-                rmtree(str(match))
-            else:
-                remove(str(match))
+            try:
+                if match.is_dir():
+                    rmtree(str(match))
+                else:
+                    remove(str(match))
+            except PermissionError:
+                print("    Permission error, unable to delete.")
+                continue
 
     # Removing the app itself
     if input(" * Delete the app itself ? [y/N] ") in {'y', 'Y'}:
