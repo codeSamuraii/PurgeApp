@@ -8,8 +8,10 @@ https://github.com/codesamuraii
 import wx
 import purge_app
 
+
 class FileDrop(wx.FileDropTarget):
     """Custom drag-and-drop component to launch main functions."""
+
     def __init__(self, window):
         wx.FileDropTarget.__init__(self)
         self.window = window
@@ -37,17 +39,18 @@ class FileDrop(wx.FileDropTarget):
 class MainWindow(wx.Frame):
    def __init__(self):
         # Init window components
-        wx.Frame.__init__(self, None, title="PurgeApp")
+        wx.Frame.__init__(self, None, title="PurgeApp", size=wx.Size(250, 200),
+                          style=wx.DEFAULT_FRAME_STYLE & ~(wx.RESIZE_BORDER | wx.MAXIMIZE_BOX))
         panel = wx.Panel(self)
         h_sizer = wx.BoxSizer(wx.HORIZONTAL)
         main_sizer = wx.BoxSizer(wx.VERTICAL)
 
         # Create label
-        self.label = wx.StaticText(panel, style=wx.ALIGN_CENTER, label="Drag an app to uninstall it")
+        self.label = wx.StaticText(panel, style=wx.ALIGN_CENTER, label="Drag an app to uninstall it.\n")
 
         # Connect frame to drag-and-drop
-        dt = FileDrop(panel)
-        panel.SetDropTarget(dt)
+        file_drop = FileDrop(panel)
+        panel.SetDropTarget(file_drop)
 
         # Center the label
         h_sizer.Add(self.label, 0, wx.CENTER)
