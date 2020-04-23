@@ -6,23 +6,40 @@ purge_app.py
 https://github.com/codesamuraii
 """
 import plistlib
-from os import remove
+from os import remove, geteuid
 from pathlib import Path
 from shutil import rmtree
 from sys import argv
 
 
 # Common directories where app-related data is
-SEARCH_DIRECTORIES = [
+SEARCH_DIRECTORIES_USER = [
     Path.home() / "Library",
     Path("/Library"),
     Path("/System/Library"),
     Path("/Users/Shared"),
-    # TODO: Add these folders only if root
-    # Path('/bin'),
-    # Path('/etc'),
-    # Path('/var')
 ]
+
+SEARCH_DIRECTORIES_ROOT = [
+    Path('/bin'),
+    Path('/etc'),
+    Path('/var'),
+]
+
+
+class SkipSignal:
+    def __init__(self):
+        self.skip = False
+
+    def on(self):
+        self.skip = True
+
+    def yes(self):
+        if self.skip is True:
+            self.skip = False
+            return True
+        else:
+            return False
 
 
 def read_plist(app_path):
@@ -47,7 +64,7 @@ def read_plist(app_path):
     return relevant_infos
 
 
-def check_dir(dir_path, hints):
+def check_dir(dir_path, hints, skip_signal):
     """Recursive generator to walk through directories and check for hints."""
     try:
         dir_content = list(dir_path.iterdir())
@@ -59,24 +76,30 @@ def check_dir(dir_path, hints):
             if any(h in node.name for h in hints):
                 yield node
 
+                if skip_signal.yes():
+                    break
+
             elif node.is_dir() and not node.is_symlink():
-                yield from check_dir(node, hints)
+                yield from check_dir(node, hints, skip_signal)
         except PermissionError:
             continue
 
 
-def scan(search_directories, hints):
+def scan(search_directories, hints, skip_signal):
     """Recursively search in provided directories for hints."""
-    results = set()
     for directory in search_directories:
-        for match in check_dir(directory, hints):
-            results.add(match)
-
-    return results
+        for match in check_dir(directory, hints, skip_signal):
+            yield match
 
 
 def run(path_to_app):
     """Main function."""
+    if geteuid() == 0:
+        print("* Running as root, extending search parameters.")
+        search_directories = SEARCH_DIRECTORIES_USER + SEARCH_DIRECTORIES_ROOT
+    else:
+        search_directories = SEARCH_DIRECTORIES_USER
+
     print("* Reading app informations...")
     hints = read_plist(path_to_app)
 
@@ -85,11 +108,12 @@ def run(path_to_app):
         print(" - {}".format(hint))
 
     print("\n* Searching for app-related data (may take a while)...")
-    matches = scan(SEARCH_DIRECTORIES, hints)
-    print("* Found {} potential leftovers. Delete :".format(len(matches)))
+    skip_signal = SkipSignal()
 
-    for match in matches:
-        if input("  — {} [y/N] ".format(str(match))) in {'y', 'Y'}:
+    for match in scan(search_directories, hints, skip_signal):
+        action = input("  — '{}' (y/N/skip) ".format(str(match)))
+
+        if action in {'y', 'Y'}:
             try:
                 if match.is_dir():
                     rmtree(str(match))
@@ -98,6 +122,10 @@ def run(path_to_app):
             except PermissionError:
                 print("    Permission error, unable to delete.")
                 continue
+
+        elif action in {'s', 'S'}:
+            skip_signal.on()
+            print("  Skipped: '{}'".format(match.parent))
 
     # Removing the app itself
     if input(" * Delete the app itself ? [y/N] ") in {'y', 'Y'}:
