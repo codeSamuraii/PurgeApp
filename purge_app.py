@@ -64,6 +64,22 @@ def read_plist(app_path):
     return relevant_infos
 
 
+def get_identifiers(path_to_app):
+    hints = read_plist(path_to_app)
+    to_use = set()
+
+    print("\n- Identifiers found:")
+    for hint in hints:
+        if input("  > {}\t\tuse? (Y/n) ".format(hint)) not in {'N', 'n'}:
+            to_use.add(hint)
+
+    if not to_use:
+        print("\nx No data to use. Quitting.")
+        exit()
+    else:
+        return to_use
+
+
 def check_dir(dir_path, hints, skip_signal):
     """Recursive generator to walk through directories and check for hints."""
     try:
@@ -95,23 +111,18 @@ def scan(search_directories, hints, skip_signal):
 def run(path_to_app):
     """Main function."""
     if geteuid() == 0:
-        print("* Running as root, extending search parameters.")
+        print("- Running as root, extending search parameters.")
         search_directories = SEARCH_DIRECTORIES_USER + SEARCH_DIRECTORIES_ROOT
     else:
         search_directories = SEARCH_DIRECTORIES_USER
 
-    print("* Reading app informations...")
-    hints = read_plist(path_to_app)
+    print("- Reading app informations...\n  > {}".format(path_to_app))
+    hints = get_identifiers(path_to_app)
 
-    print("* Identifiers :")
-    for hint in hints:
-        print(" - {}".format(hint))
-
-    print("\n* Searching for app-related data (may take a while)...")
+    print("\n- Searching for app-related data (may take a while)...")
     skip_signal = SkipSignal()
-
     for match in scan(search_directories, hints, skip_signal):
-        action = input("  — '{}' (y/N/skip) ".format(str(match)))
+        action = input("  > '{}' (y/N/skip) ".format(str(match)))
 
         if action in {'y', 'Y'}:
             try:
@@ -128,7 +139,7 @@ def run(path_to_app):
             print("  Skipped: '{}'".format(match.parent))
 
     # Removing the app itself
-    if input(" * Delete the app itself ? [y/N] ") in {'y', 'Y'}:
+    if input("\n- Delete the app itself ? [y/N] ") in {'y', 'Y'}:
         rmtree(path_to_app)
         print("* Done !")
 
