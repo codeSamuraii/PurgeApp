@@ -14,18 +14,32 @@ or
 >You may need to `chmod +x purge_app.py` once before to allow execution.
 
 #### Example
-```sh
-$ ./purge_app.py '/Applications/OneDrive.app'
+```
+$ ./purge_app.py '/Applications/Adium.app'
+- Reading app informations...
+  > /Applications/Adium.app
 
-* Searching for app-related data...
- - /Library/LaunchDaemons/com.microsoft.OneDriveUpdaterDaemon.plist
- - /var/db/receipts/com.microsoft.OneDrive.bom
- - /var/db/receipts/com.microsoft.OneDrive.plist
- - /Users/codesamuraii/Library/Group Containers/UBF8T346G9.OfficeOneDriveSyncIntegration
+- Identifiers found:
+  > com.adiumX.adiumX       use? (Y/n) y
+  > Adium                   use? (Y/n) y
+  > AdIM                    use? (Y/n) n
 
-* Delete (along with the app) ? [y/N] y
+- Searching for app-related data (may take a while)...
+  > '/Users/me/Library/Application Support/Adium 2.0' (y/N/skip) y
+  > '/Users/me/Library/Address Book Plug-Ins/AdiumAddressBookAction_ICQ.scpt' (y/N/skip) y
+  > '/Users/me/Library/Address Book Plug-Ins/AdiumAddressBookAction_AIM.scpt' (y/N/skip) y
+  > '/Users/me/Library/Address Book Plug-Ins/AdiumAddressBookAction_SMS.scpt' (y/N/skip) s
+  Skipped: '/Users/me/Library/Address Book Plug-Ins/'
+  > '/Users/me/Library/Preferences/com.adiumX.adiumX.plist' (y/N/skip) y
+  > '/Users/me/Library/Caches/Adium' (y/N/skip) y
+  > '/Users/me/Library/Caches/com.adiumX.adiumX' (y/N/skip) y
+
+- Delete the app itself ? [y/N] y
 * Done !
 ```
 
-### Note
-This software is still in development. Double check the path you give as an argument or you may delete files you don't want to delete.
+### Warning
+This software is still in development, please use with caution!
+- Do not use short identifiers (eg. `port` will catch `WeatherReport`)
+- Check every path before deleting.
+- Only run as root if you know what you're doing.
