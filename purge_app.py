@@ -142,3 +142,12 @@ def run(path_to_app):
     if input("\n- Delete the app itself ? [y/N] ") in {'y', 'Y'}:
         rmtree(path_to_app)
         print("* Done !")
+
+
+# NOTE: Really bad design, will use argparse afterwards
+if __name__ == '__main__':
+    if len(argv) < 2:
+        print("Usage: purge_app.py PATH_TO_APP.app")
+        exit()
+
+    run(argv[1])
