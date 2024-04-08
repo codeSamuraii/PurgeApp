@@ -5,24 +5,24 @@ Cleanly uninstall a macOS application by also removing related files and directo
 
 ### Usage
 ```sh
-python3 purge_app.py '/Applications/Example.app'
+python purge_app.py /Applications/Example.app
 ```
 or
 ```sh
-./purge_app.py '/Applications/Example.app'
+./purge_app.py /Applications/Example.app
 ```
 >You may need to `chmod +x purge_app.py` once before to allow execution.
 
 #### Example
 ```
-$ ./purge_app.py '/Applications/Adium.app'
+$ ./purge_app.py /Applications/Adium.app
 - Reading app informations...
   > /Applications/Adium.app
 
 - Identifiers found:
   > com.adiumX.adiumX       use? (Y/n) y
   > Adium                   use? (Y/n) y
-  > AdIM                    use? (Y/n) n
+  > AdIM                    use? (Y/n) n    # Short and generic, might cause false positives.
 
 - Searching for app-related data (may take a while)...
   > '/Users/me/Library/Application Support/Adium 2.0' (y/N/skip) y
@@ -37,6 +37,7 @@ $ ./purge_app.py '/Applications/Adium.app'
 - Delete the app itself ? [y/N] y
 * Done !
 ```
+Use `y` to accept a choice, `n` to refuse and `s` to skip that folder.
 
 ### Warning
 This software is still in development, please use with caution!
